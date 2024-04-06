@@ -10,24 +10,25 @@ import java.util.logging.Logger;
 
 public class BasketSplitter {
 
-    private Map<String, List<String>> deliveryOptions;
+    private DeliveryOptions deliveryOptions;
     private List<String> items;
     private static final Logger LOGGER = Logger.getLogger(BasketSplitter.class.getName());
 
     public BasketSplitter(String absolutePathToConfigFile, String absolutePathToBasketFile) throws IOException {
         LOGGER.info("Loading config file from: " + absolutePathToConfigFile);
         ObjectMapper objectMapper = new ObjectMapper();
-        this.deliveryOptions = objectMapper.readValue(Paths.get(absolutePathToConfigFile).toFile(), new TypeReference<Map<String, List<String>>>() {});
+        Map<String, List<String>> deliveryOptionsMap = objectMapper.readValue(Paths.get(absolutePathToConfigFile).toFile(), new TypeReference<Map<String, List<String>>>() {});
+        this.deliveryOptions = new DeliveryOptions(deliveryOptionsMap);
         this.items = objectMapper.readValue(Paths.get(absolutePathToBasketFile).toFile(), new TypeReference<List<String>>() {});
     }
 
     public Map<String, List<String>> split() {
         LOGGER.info("Items: " + items);
-        LOGGER.info("Delivery options: " + deliveryOptions);
+        LOGGER.info("Delivery options: " + deliveryOptions.getDeliveryOptions());
         Map<String, List<String>> deliveryGroups = new HashMap<>();
 
         for (String item : items) {
-            List<String> methods = deliveryOptions.get(item);
+            List<String> methods = deliveryOptions.getDeliveryOptions().get(item);
             if (methods != null) {
                 for (String method : methods) {
                     deliveryGroups.computeIfAbsent(method, k -> new ArrayList<>()).add(item);
