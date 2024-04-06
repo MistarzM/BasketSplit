@@ -12,12 +12,12 @@ class BasketSplitterTest {
     @BeforeEach
     void setUp() throws Exception {
         // Assuming the config file is loaded in the BasketSplitter constructor
-        basketSplitter = new BasketSplitter("/path/to/config.json");
+        basketSplitter = new BasketSplitter("C:/Users/micha/OneDrive/Pulpit/BasketSpliter/config.json");
     }
 
     @Test
     void testSplitBasket1() throws Exception {
-        List<String> basket1 = Files.readAllLines(Paths.get("/path/to/basket-1.json"));
+        List<String> basket1 = Files.readAllLines(Paths.get("C:/Users/micha/OneDrive/Pulpit/BasketSpliter/basket-1.json"));
         Map<String, List<String>> result = basketSplitter.split(basket1);
         assertNotNull(result);
         // Add more assertions here to validate the splitting logic,
@@ -27,7 +27,7 @@ class BasketSplitterTest {
 
     @Test
     void testSplitBasket2() throws Exception {
-        List<String> basket2 = Files.readAllLines(Paths.get("/path/to/basket-2.json"));
+        List<String> basket2 = Files.readAllLines(Paths.get("C:/Users/micha/OneDrive/Pulpit/BasketSpliter/basket-2.json"));
         Map<String, List<String>> result = basketSplitter.split(basket2);
         assertNotNull(result);
         // Similar to above, add assertions to validate the result

@@ -1,10 +1,13 @@
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Map;
 
 public class DeliveryOptions {
     private Map<String, List<String>> productDeliveryOptions;
 
-    public DeliveryOptions(Map<String, List<String>> productDeliveryOptions) {
+    @JsonCreator
+    public DeliveryOptions(@JsonProperty("productDeliveryOptions") Map<String, List<String>> productDeliveryOptions) {
         this.productDeliveryOptions = productDeliveryOptions;
     }
 
