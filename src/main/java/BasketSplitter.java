@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.nio.file.Paths;
 import java.io.IOException;
@@ -10,6 +11,7 @@ public class BasketSplitter {
 
     public BasketSplitter(String absolutePathToConfigFile) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         this.deliveryOptions = objectMapper.readValue(Paths.get(absolutePathToConfigFile).toFile(), new TypeReference<DeliveryOptions>() {});
     }
 
@@ -23,9 +25,11 @@ public class BasketSplitter {
         // Populate the temporary map with delivery methods for each item
         for (String item : items) {
             Map<String, List<String>> productDeliveryOptions = deliveryOptions.getProductDeliveryOptions();
-            List<String> methods = productDeliveryOptions.get(item);
-            if (methods != null) {
-                itemDeliveryMethods.put(item, new HashSet<>(methods));
+            if (productDeliveryOptions != null) {
+                List<String> methods = productDeliveryOptions.get(item);
+                if (methods != null) {
+                    itemDeliveryMethods.put(item, new HashSet<>(methods));
+                }
             }
         }
 
