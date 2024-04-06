@@ -7,6 +7,10 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Collections;
+import java.util.Iterator;
 
 public class BasketSplitter {
 
@@ -14,26 +18,49 @@ public class BasketSplitter {
     private List<String> items;
     private static final Logger LOGGER = Logger.getLogger(BasketSplitter.class.getName());
 
-    public BasketSplitter(String absolutePathToConfigFile, String absolutePathToBasketFile) throws IOException {
+    public BasketSplitter(String absolutePathToConfigFile) throws IOException {
         LOGGER.info("Loading config file from: " + absolutePathToConfigFile);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, List<String>> deliveryOptionsMap = objectMapper.readValue(Paths.get(absolutePathToConfigFile).toFile(), new TypeReference<Map<String, List<String>>>() {});
         this.deliveryOptions = new DeliveryOptions(deliveryOptionsMap);
-        this.items = objectMapper.readValue(Paths.get(absolutePathToBasketFile).toFile(), new TypeReference<List<String>>() {});
     }
 
-    public Map<String, List<String>> split() {
+    public Map<String, List<String>> split(String absolutePathToBasketFile) throws IOException {
+        LOGGER.info("Loading basket file from: " + absolutePathToBasketFile);
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<String> items = objectMapper.readValue(Paths.get(absolutePathToBasketFile).toFile(), new TypeReference<List<String>>() {});
         LOGGER.info("Items: " + items);
-        LOGGER.info("Delivery options: " + deliveryOptions.getDeliveryOptions());
-        Map<String, List<String>> deliveryGroups = new HashMap<>();
 
-        for (String item : items) {
-            List<String> methods = deliveryOptions.getDeliveryOptions().get(item);
-            if (methods != null) {
+        Map<String, List<String>> productDeliveryOptions = deliveryOptions.getDeliveryOptions();
+        LOGGER.info("Delivery options: " + productDeliveryOptions);
+
+        Map<String, List<String>> deliveryGroups = new HashMap<>();
+        Set<String> unassignedItems = new HashSet<>(items);
+
+        while (!unassignedItems.isEmpty()) {
+            Map<String, Integer> methodCoverage = new HashMap<>();
+
+            for (String item : unassignedItems) {
+                List<String> methods = productDeliveryOptions.get(item);
                 for (String method : methods) {
-                    deliveryGroups.computeIfAbsent(method, k -> new ArrayList<>()).add(item);
+                    methodCoverage.put(method, methodCoverage.getOrDefault(method, 0) + 1);
                 }
             }
+
+            String bestMethod = Collections.max(methodCoverage.entrySet(), Map.Entry.comparingByValue()).getKey();
+            List<String> groupedItems = new ArrayList<>();
+
+            Iterator<String> itemIterator = unassignedItems.iterator();
+            while (itemIterator.hasNext()) {
+                String item = itemIterator.next();
+                List<String> methods = productDeliveryOptions.get(item);
+                if (methods.contains(bestMethod)) {
+                    groupedItems.add(item);
+                    itemIterator.remove();
+                }
+            }
+
+            deliveryGroups.put(bestMethod, groupedItems);
         }
 
         return deliveryGroups;
