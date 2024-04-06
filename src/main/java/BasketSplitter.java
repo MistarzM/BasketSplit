@@ -14,15 +14,14 @@ import java.util.Iterator;
 
 public class BasketSplitter {
 
-    private DeliveryOptions deliveryOptions;
+    private Map<String, List<String>> deliveryOptions;
     private List<String> items;
     private static final Logger LOGGER = Logger.getLogger(BasketSplitter.class.getName());
 
     public BasketSplitter(String absolutePathToConfigFile) throws IOException {
         LOGGER.info("Loading config file from: " + absolutePathToConfigFile);
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, List<String>> deliveryOptionsMap = objectMapper.readValue(Paths.get(absolutePathToConfigFile).toFile(), new TypeReference<Map<String, List<String>>>() {});
-        this.deliveryOptions = new DeliveryOptions(deliveryOptionsMap);
+        this.deliveryOptions = objectMapper.readValue(Paths.get(absolutePathToConfigFile).toFile(), new TypeReference<Map<String, List<String>>>() {});
     }
 
     public Map<String, List<String>> split(String absolutePathToBasketFile) throws IOException {
@@ -31,7 +30,7 @@ public class BasketSplitter {
         List<String> items = objectMapper.readValue(Paths.get(absolutePathToBasketFile).toFile(), new TypeReference<List<String>>() {});
         LOGGER.info("Items: " + items);
 
-        Map<String, List<String>> productDeliveryOptions = deliveryOptions.getDeliveryOptions();
+        Map<String, List<String>> productDeliveryOptions = this.deliveryOptions;
         LOGGER.info("Delivery options: " + productDeliveryOptions);
 
         Map<String, List<String>> deliveryGroups = new HashMap<>();
