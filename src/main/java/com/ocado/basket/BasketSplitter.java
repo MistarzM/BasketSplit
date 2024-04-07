@@ -1,38 +1,32 @@
 package com.ocado.basket;
 
-import com.fasterxml.jackson.databind.ObjectMapper; // ObjectMapper gives us ability
-import com.fasterxml.jackson.core.type.TypeReference;
-import java.nio.file.Paths;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.logging.Logger;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Iterator;
+import com.fasterxml.jackson.databind.ObjectMapper; //Provides functionality for converting between Java objects and matching JSON constructs
+import com.fasterxml.jackson.core.type.TypeReference; //TypeReference is used to pass full generics type information, and avoid problems with type erasure
+import java.nio.file.Paths; //Provides more flexible file handling
+import java.io.IOException; //Required to manage errors that might occur when working with files and processing data
+import java.util.List;  //import - ordered collection
+import java.util.Map; //import - mapping between a set of keys and values
+import java.util.ArrayList; //import - provides a resizable-array implementation of the List interface
+import java.util.HashMap;   //import - provides the hash table based implementation of Map interface
+import java.util.Set;   //import -  collection that contains no duplicate elements
+import java.util.HashSet;   //import  - provides a hash table based implementation of the Set interface
+import java.util.Iterator;  //import    - provides an iterator over a collection
 
 public class BasketSplitter {
 
-    private Map<String, List<String>> deliveryOptions;
+    private final Map<String, List<String>> deliveryOptions;
     private List<String> items;
-    private static final Logger LOGGER = Logger.getLogger(BasketSplitter.class.getName());
 
     public BasketSplitter(String absolutePathToConfigFile) throws IOException {
-        LOGGER.info("Loading config file from: " + absolutePathToConfigFile);
         ObjectMapper objectMapper = new ObjectMapper();
         this.deliveryOptions = objectMapper.readValue(Paths.get(absolutePathToConfigFile).toFile(), new TypeReference<Map<String, List<String>>>() {});
     }
 
     public Map<String, List<String>> split(String absolutePathToBasketFile) throws IOException {
-        LOGGER.info("Loading basket file from: " + absolutePathToBasketFile);
         ObjectMapper objectMapper = new ObjectMapper();
         List<String> items = objectMapper.readValue(Paths.get(absolutePathToBasketFile).toFile(), new TypeReference<List<String>>() {});
-        LOGGER.info("Items: " + items);
 
         Map<String, List<String>> productDeliveryOptions = this.deliveryOptions;
-        LOGGER.info("Delivery options: " + productDeliveryOptions);
 
         Map<String, List<String>> deliveryGroups = new HashMap<>();
         Set<String> unassignedItems = new HashSet<>(items);

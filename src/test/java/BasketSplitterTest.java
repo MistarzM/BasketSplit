@@ -1,11 +1,11 @@
-import com.ocado.basket.BasketSplitter;
-import org.junit.jupiter.api.Test;
-import java.util.List;
-import java.util.Map;
-import static org.junit.jupiter.api.Assertions.*;
+import com.ocado.basket.BasketSplitter; // Imports the BasketSplitter class
+import org.junit.jupiter.api.Test;  //Import used to mark methods as test methods
+import java.util.List;  //import - ordered collection
+import java.util.Map;   //import - mapping between a set of keys and values
+import static org.junit.jupiter.api.Assertions.*;   //import - used to check condition in the test methods
 
 class BasketSplitterTest {
-
+    //unit tests for the BasketSplitter class
     @Test
     void testSplitBasket1() throws Exception {
         BasketSplitter basketSplitter = new BasketSplitter("Zadanie/config.json");
