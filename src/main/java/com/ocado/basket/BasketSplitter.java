@@ -18,16 +18,16 @@ public class BasketSplitter {
     private List<String> items;
 
     // A constructor responsible for parsing the configuration file and setting up the deliveryOptions map
-    public BasketSplitter(String absolutePathToConfigFile) throws IOException {
+    public BasketSplitter(String PathToConfigFile) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        this.deliveryOptions = objectMapper.readValue(Paths.get(absolutePathToConfigFile).toFile(), new TypeReference<Map<String, List<String>>>() {});
+        this.deliveryOptions = objectMapper.readValue(Paths.get(PathToConfigFile).toFile(), new TypeReference<Map<String, List<String>>>() {});
     }
 
     // A method designed to partition the items within the basket into distinct delivery groups.
-    public Map<String, List<String>> split(String absolutePathToBasketFile) throws IOException {
+    public Map<String, List<String>> split(String PathToBasketFile) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         // Read items from the basket*.json files
-        List<String> items = objectMapper.readValue(Paths.get(absolutePathToBasketFile).toFile(), new TypeReference<List<String>>() {});
+        List<String> items = objectMapper.readValue(Paths.get(PathToBasketFile).toFile(), new TypeReference<List<String>>() {});
         Map<String, List<String>> productDeliveryOptions = this.deliveryOptions;
 
         Map<String, List<String>> deliveryGroups = new HashMap<>();
