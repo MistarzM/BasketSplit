@@ -1,4 +1,4 @@
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper; // ObjectMapper gives us ability
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.nio.file.Paths;
 import java.io.IOException;
@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Collections;
 import java.util.Iterator;
 
 public class BasketSplitter {
@@ -46,20 +45,36 @@ public class BasketSplitter {
                 }
             }
 
-            String bestMethod = Collections.max(methodCoverage.entrySet(), Map.Entry.comparingByValue()).getKey();
-            List<String> groupedItems = new ArrayList<>();
+            List<Map.Entry<String, Integer>> sortedMethods = new ArrayList<>(methodCoverage.entrySet());
+            sortedMethods.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
 
-            Iterator<String> itemIterator = unassignedItems.iterator();
-            while (itemIterator.hasNext()) {
-                String item = itemIterator.next();
-                List<String> methods = productDeliveryOptions.get(item);
-                if (methods.contains(bestMethod)) {
-                    groupedItems.add(item);
-                    itemIterator.remove();
+            boolean allItemsAssigned = false;
+            for (Map.Entry<String, Integer> entry : sortedMethods) {
+                String method = entry.getKey();
+                if (entry.getValue() == unassignedItems.size()) {
+                    deliveryGroups.put(method, new ArrayList<>(unassignedItems));
+                    unassignedItems.clear();
+                    allItemsAssigned = true;
+                    break;
                 }
             }
 
-            deliveryGroups.put(bestMethod, groupedItems);
+            if (!allItemsAssigned) {
+                String bestMethod = sortedMethods.get(0).getKey();
+                List<String> groupedItems = new ArrayList<>();
+
+                Iterator<String> itemIterator = unassignedItems.iterator();
+                while (itemIterator.hasNext()) {
+                    String item = itemIterator.next();
+                    List<String> methods = productDeliveryOptions.get(item);
+                    if (methods.contains(bestMethod)) {
+                        groupedItems.add(item);
+                        itemIterator.remove();
+                    }
+                }
+
+                deliveryGroups.put(bestMethod, groupedItems);
+            }
         }
 
         return deliveryGroups;
