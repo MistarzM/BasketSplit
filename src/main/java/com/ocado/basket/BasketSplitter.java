@@ -1,3 +1,5 @@
+package com.ocado.basket;
+
 import com.fasterxml.jackson.databind.ObjectMapper; // ObjectMapper gives us ability
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.nio.file.Paths;
