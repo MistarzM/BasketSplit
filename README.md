@@ -14,17 +14,17 @@ These instructions will get you a copy of the project up and running on your loc
 ### Installing
 
 Clone the repository:
--git clone https://github.com/MistarzM/Basket_Split.git
+`git clone https://github.com/MistarzM/Basket_Split.git`
 
 Navigate to the project directory:
--cd Basket_Split
+`cd Basket_Split`
 
 Build the project:
--mvn clean install
+`mvn clean install`
 
 ## Running the tests
 To run the tests, use the following command:
--mvn test
+`mvn test`
 
 ## Built With
 
